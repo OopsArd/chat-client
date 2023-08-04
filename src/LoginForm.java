@@ -40,7 +40,9 @@ public class LoginForm extends JFrame{
                 String password = new String(pass);
 
                 if(Check(username,password) == true){
-                    JOptionPane.showMessageDialog(null, "OK");
+                    dispose();
+                    Form f = new Form();
+                    f.Form();
                 }else{
                     JOptionPane.showMessageDialog(null, "tên đăng nhập hoặc mật khẩu không chính xác");
                 }
