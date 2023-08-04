@@ -18,7 +18,6 @@ public class LoginForm extends JFrame{
     private JCheckBox showPassword;
     private JButton btnRegister;
 
-
     private TreeMap<String, String> data = new TreeMap<>();
 
     public LoginForm() {
@@ -35,6 +34,7 @@ public class LoginForm extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = txtUsername.getText();
+                System.out.println("update: " + username);
 
                 char[] pass = txtPassword.getPassword();
                 String password = new String(pass);
@@ -42,7 +42,7 @@ public class LoginForm extends JFrame{
                 if(Check(username,password) == true){
                     dispose();
                     Form f = new Form();
-                    f.Form();
+                    f.Form(username);
                 }else{
                     JOptionPane.showMessageDialog(null, "tên đăng nhập hoặc mật khẩu không chính xác");
                 }
@@ -66,6 +66,7 @@ public class LoginForm extends JFrame{
         this.setLocationRelativeTo(null);
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 
 
     }

@@ -1,4 +1,7 @@
 import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -27,27 +30,54 @@ public class Form extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String mess = txtInput.getText();
+                String id = thread.getName();
                 if(mess.isEmpty()){
                     return;
                 }
 
                 try{
-                    send(mess);
+                    sendToServer("MESSAGE", id, mess);
                     mainArea.setText(mainArea.getText()+"[Bạn]: "+mess+"\n");
-                    mainArea.setCaretPosition(mainArea.getDocument().getLength());
+                    txtInput.setText("");
+
+                }catch(Exception ex){
+                    ex.printStackTrace();
+                }
+            }
+        });
+        txtInput.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String mess = txtInput.getText();
+                String id = thread.getName();
+
+
+
+                if(mess.isEmpty()){
+                    return;
+                }
+                try{
+                    sendToServer("MESSAGE", id, mess);
+                    mainArea.setText(mainArea.getText()+"[Bạn]: "+mess+"\n");
 
                     txtInput.setText("");
 
                 }catch(Exception ex){
                     ex.printStackTrace();
                 }
-
-
+            }
+        });
+        btnLogout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                LoginForm lg = new LoginForm();
+                lg.LoginForm();
             }
         });
     }
 
-    public void Form(){
+    public void Form(String username){
 
         this.setContentPane(mainPanel);
         this.setSize(700,500);
@@ -55,9 +85,13 @@ public class Form extends JFrame{
         this.setVisible(true);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+
         mainArea.setEditable(false);
 
         ConnectToServer();
+        thread.setName(username);
+
+
     }
 
     private void ConnectToServer(){
@@ -66,10 +100,11 @@ public class Form extends JFrame{
             public void run() {
                 try {
                     String serverHost = "localhost";
-                    int serverPort = 12345; // Đổi thành cổng mà server đang lắng nghe
+                    int serverPort = 12345;
 
                     socket = new Socket(serverHost, serverPort);
                     System.out.println("Kết nối thành công");
+
 
                     // Luồng đọc từ server
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -77,15 +112,31 @@ public class Form extends JFrame{
                     // Luồng ghi tới server
                     out = new PrintWriter(socket.getOutputStream(), true);
 
-                    String message;
+
+                    sendToServer("USERS", thread.getName(), "connect");
+
+                    String messageFromServer;
                     while (true) {
-                        message = in.readLine();
-                        if (message == null) {
+                        messageFromServer = in.readLine();
+                        if (messageFromServer == null) {
                             break;
                         }
 
-                        mainArea.setText(mainArea.getText()+message+"\n");
-                        mainArea.setCaretPosition(mainArea.getDocument().getLength());
+                        String[] mess = messageFromServer.split("`");
+                        if(mess[0].equals("USERS")){
+                            String users = messageFromServer.replace("USERS`", "");
+                            String[] user = users.split("`");
+                            for(String u : user){
+                                listOnline.setText( u + "\n");
+                            }
+                        }
+
+                        if(mess[0].equals("MESSAGE")){
+                            String isYou = thread.getName();
+                            if(!mess[1].equals(isYou)){
+                                mainArea.setText(mainArea.getText()+ "[" + mess[1] + "]:" + mess[2] +"\n");
+                            }
+                        }
                     }
 
                 } catch (Exception ex) {
@@ -96,8 +147,8 @@ public class Form extends JFrame{
         thread.start();
     }
 
-    private void send(String message) throws IOException{
-        out.write(message);
+    private void sendToServer(String tittle, String id, String message) throws IOException{
+        out.println(tittle + "`" + id + "`" + message);
         out.flush();
     }
 }
