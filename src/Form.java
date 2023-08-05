@@ -142,12 +142,22 @@ public class Form extends JFrame{
                                 String[] mess = responMess.split("`");
                                 String isYou = thread.getName();
                                 if(!mess[0].equals(isYou)){
-                                    mainArea.setText(mainArea.getText()+ "[" + mess[0] + "]:" + mess[1] +"\n");
+                                    //mainArea.setText(mainArea.getText()+ "[" + mess[0] + "]:" + mess[1] +"\n");
+                                    String newMess = "[" + mess[0] + "]:" + mess[1] +"\n";
+
+                                    StyledDocument doc = mainArea.getStyledDocument();
+
+                                    // center align
+                                    SimpleAttributeSet leftAlignStyle = new SimpleAttributeSet();
+                                    StyleConstants.setAlignment(leftAlignStyle, StyleConstants.ALIGN_LEFT);
+
+                                    doc.insertString(doc.getLength(), newMess, leftAlignStyle);
+                                    doc.setParagraphAttributes(doc.getLength() - newMess.length(), newMess.length(), leftAlignStyle, false);
                                 }
                                 break;
                             case "ALER":
                                 String responAler = messageFromServer.replace("ALER`", "");
-                                String sysMess = responAler + "\n";
+                                String sysMess = "\n\n" +responAler + "\n\n";
 
                                 // red color
                                 StyledDocument doc = mainArea.getStyledDocument();
@@ -155,11 +165,11 @@ public class Form extends JFrame{
                                 StyleConstants.setForeground(redStyle, java.awt.Color.RED);
 
                                 // center align
-                                SimpleAttributeSet rightAlignStyle = new SimpleAttributeSet();
-                                StyleConstants.setAlignment(rightAlignStyle, StyleConstants.ALIGN_CENTER);
+                                SimpleAttributeSet centerAlignStyle = new SimpleAttributeSet();
+                                StyleConstants.setAlignment(centerAlignStyle, StyleConstants.ALIGN_CENTER);
 
                                 doc.insertString(doc.getLength(), sysMess, redStyle);
-                                doc.setParagraphAttributes(doc.getLength() - sysMess.length(), sysMess.length(), rightAlignStyle, false);
+                                doc.setParagraphAttributes(doc.getLength() - sysMess.length(), sysMess.length(), centerAlignStyle, false);
 
                                 break;
                             case "FILE":
