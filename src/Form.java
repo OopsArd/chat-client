@@ -117,7 +117,7 @@ public class Form extends JFrame{
 
                     String messageFromServer;
                     while (true) {
-                        byte[] buffer = new byte[1024];
+                        byte[] buffer = new byte[10240];
                         int bytesRead = inputStream.read(buffer);
 
                         String title = new String(buffer, 0, 4);
@@ -142,7 +142,6 @@ public class Form extends JFrame{
                                 String[] mess = responMess.split("`");
                                 String isYou = thread.getName();
                                 if(!mess[0].equals(isYou)){
-                                    //mainArea.setText(mainArea.getText()+ "[" + mess[0] + "]:" + mess[1] +"\n");
                                     String newMess = "[" + mess[0] + "]:" + mess[1] +"\n";
 
                                     StyledDocument doc = mainArea.getStyledDocument();
@@ -198,39 +197,6 @@ public class Form extends JFrame{
                             default:
                                 System.out.println("TITLE không tồn tại");
                         }
-
-                        /*
-                        if(title.equals("NAME")){
-                            String respon = messageFromServer.replace("NAME`", "");
-                            String[] listUsers = respon.split("`");
-
-                            listOnline.setText("");
-                            for(String user : listUsers){
-                                listOnline.setText(listOnline.getText() + user + "\n");
-                            }
-                        }
-
-                        if(title.equals("MESS")){
-                            String respon = messageFromServer.replace("MESS`", "");
-                            String[] mess = respon.split("`");
-                            String isYou = thread.getName();
-
-                            if(!mess[0].equals(isYou)){
-                                mainArea.setText(mainArea.getText()+ "[" + mess[0] + "]:" + mess[1] +"\n");
-                            }
-                        }
-
-                        if(title.equals("ALER")){
-                            String aler = messageFromServer.replace("MESS`", "");
-                            String sysMess = mainArea.getText()+ aler + "\n";
-
-                            StyledDocument doc = mainArea.getStyledDocument();
-                            SimpleAttributeSet redStyle = new SimpleAttributeSet();
-                            StyleConstants.setForeground(redStyle, java.awt.Color.RED);
-
-                            doc.insertString(doc.getLength(), sysMess, redStyle);
-                        }
-                        */
                     }
 
                 } catch (Exception ex) {
@@ -259,7 +225,7 @@ public class Form extends JFrame{
         try {
             FileInputStream fileInputStream = new FileInputStream(selectedFile);
             String fileName = selectedFile.getName();
-            byte[] buffer = new byte[4096];
+            byte[] buffer = new byte[10240];
             int bytesRead = fileInputStream.read(buffer);
             String fileContent = new String(buffer,0, bytesRead);
             sendFileToServer("FILE",thread.getName(),fileName,fileContent);
