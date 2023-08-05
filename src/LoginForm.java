@@ -34,8 +34,6 @@ public class LoginForm extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String username = txtUsername.getText();
-                System.out.println("update: " + username);
-
                 char[] pass = txtPassword.getPassword();
                 String password = new String(pass);
 
